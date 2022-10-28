@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutterwave_standard/flutterwave.dart';
-import 'package:flutterwave_standard/models/subaccount.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -151,9 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: double.infinity,
                 height: 50,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: this._onPressed,
-                  color: Colors.blue,
                   child: Text(
                     "Make Payment",
                     style: TextStyle(color: Colors.white),
@@ -174,65 +172,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _handlePaymentInitialization() async {
-    final style = FlutterwaveStyle(
-      appBarText: "My Standard Blue",
-      buttonColor: Color(0xffd0ebff),
-      buttonTextStyle: TextStyle(
-        color: Colors.deepOrangeAccent,
-        fontSize: 16,
-      ),
-      appBarColor: Color(0xff8fa33b),
-      dialogCancelTextStyle: TextStyle(
-        color: Colors.brown,
-        fontSize: 18,
-      ),
-      dialogContinueTextStyle: TextStyle(
-        color: Colors.purpleAccent,
-        fontSize: 18,
-      ),
-      mainBackgroundColor: Colors.indigo,
-      mainTextStyle: TextStyle(
-        color: Colors.indigo,
-        fontSize: 19,
-        letterSpacing: 2
-      ),
-      dialogBackgroundColor: Colors.greenAccent,
-      appBarIcon: Icon(Icons.message, color: Colors.purple),
-      buttonText: "Pay $selectedCurrency${amountController.text}",
-      appBarTitleTextStyle: TextStyle(
-        color: Colors.purpleAccent,
-        fontSize: 18,
-      ),
-    );
-
     final Customer customer = Customer(
         name: "FLW Developer",
         phoneNumber: this.phoneNumberController.text ?? "12345678",
         email: "customer@customer.com");
-    
-    final subAccounts = [
-      SubAccount(id: "RS_1A3278129B808CB588B53A14608169AD", transactionChargeType: "flat", transactionPercentage: 25),
-      SubAccount(id: "RS_C7C265B8E4B16C2D472475D7F9F4426A", transactionChargeType: "flat", transactionPercentage: 50)
-    ];
 
     final Flutterwave flutterwave = Flutterwave(
         context: context,
-        style: style,
         publicKey: this.publicKeyController.text.trim().isEmpty
             ? this.getPublicKey()
             : this.publicKeyController.text.trim(),
         currency: this.selectedCurrency,
-        redirectUrl: "https://google.com",
+        redirectUrl: 'https://facebook.com',
         txRef: Uuid().v1(),
         amount: this.amountController.text.toString().trim(),
         customer: customer,
         // subAccounts: subAccounts,
-        paymentOptions: "card, payattitude, barter",
+        paymentOptions: "card, payattitude, barter, bank transfer, ussd",
         customization: Customization(title: "Test Payment"),
-        isTestMode: false);
+        isTestMode: this.isTestMode);
     final ChargeResponse response = await flutterwave.charge();
     if (response != null) {
-      this.showLoading(response.status);
+      this.showLoading(response.toString());
       print("${response.toJson()}");
     } else {
       this.showLoading("No Response!");
@@ -240,9 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String getPublicKey() {
-    if (isTestMode) return "FLWPUBK_TEST-895362a74986153380262d89bfdc9b8a-X";
-      // "FLWPUBK_TEST-02b9b5fc6406bd4a41c3ff141cc45e93-X";
-    return "FLWPUBK-aa4cd0b443404147d2d8229a37694b00-X";
+    if (isTestMode) return "FLWPUBK_TEST--X";
+    return "FLWPUBK--X";
   }
 
   void _openBottomSheet() {

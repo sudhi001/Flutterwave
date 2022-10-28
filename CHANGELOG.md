@@ -1,3 +1,10 @@
+## [1.0.5] - October, 2022
+* Fixed null when transaction is cancelled.
+* Removed modal pop up before launching web view.
+* Removed intermediate make payment screen before webview.
+* Deprecated FlutterwaveStyle.
+* Updated README file.
+
 ## [1.0.4] - July 4, 2022
 * Renamed property `isDebug` to `isTestMode`
 * Made property `redirectUrl` required

@@ -1,3 +1,5 @@
+import '../../utils.dart';
+
 class Customer {
   String email;
   String phoneNumber;
@@ -7,10 +9,11 @@ class Customer {
 
   /// Converts instance of Customer to json
   Map<String, dynamic> toJson() {
-    return {
+    final customer =  {
       "email": this.email,
       "phonenumber": this.phoneNumber,
       "name": this.name
     };
+    return Utils.removeKeysWithEmptyValues(customer);
   }
 }

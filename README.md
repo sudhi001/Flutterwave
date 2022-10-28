@@ -1,141 +1,118 @@
 
-<p align="center">  
-   <img title="Flutterwave" height="200" src="https://flutterwave.com/images/logo-colored.svg" width="50%"/>  
-</p>  
 
-# Flutterwave Flutter Standard SDK
+<p align="center">    
+   <img title="Flutterwave" height="200" src="https://flutterwave.com/images/logo/full.svg" width="50%"/>  
+</p>    
+
+# Flutterwave Flutter SDK (Standard)
+
+The Flutter library helps you create seamless payment experiences in your dart mobile app. By connecting to our modal, you can start collecting payment in no time.
+
+
+Available features include:
+
+- Collections: Card, Account, Mobile money, Bank Transfers, USSD, Barter.
+- Recurring payments: Tokenization and Subscriptions.
+- Split payments
+
 
 ## Table of Contents
 
-- [About](#about)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Deployment](#deployment)
-- [Built Using](#build-tools)
-- [References](#references)
-- [Support](#support)
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [Support](#support)
+5. [Contribution guidelines](#contribution-guidelines)
+6. [License](#license)
 
-<a id="about"></a>
-## About
-Flutterwave's Flutter SDK is Flutterwave's offical flutter sdk to integrate Flutterwave's [Standard](https://developer.flutterwave.com/docs/flutterwave-standard) payment into your flutter app. It comes with a ready made Drop In UI.
-
-
-
-<a id="getting-started"></a>
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.  
-See [references](#references) for links to dashboard and API documentation.
 
 ## Requirements
-- Ensure you have your test (and live) [API keys](https://developer.flutterwave.com/docs/api-keys).   
-  ``` Flutter version >= 1.17.0 Flutterwave version 3 API keys ```
 
-## Installation Add the dependency
+1. Flutterwave for business [API Keys](https://developer.flutterwave.com/docs/integration-guides/authentication)
+2. Supported Flutter version >= 1.17.0
 
-In your `pubspec.yaml` file add:
 
-1. `flutterwave_standard: ^1.0.4`
-2. run `flutter pub get`  
-   <a id="usage"></a>
+## Installation
+
+1. Add the dependency to your project. In your `pubspec.yaml` file add: `flutterwave_standard: 1.0.5`
+2. Run `flutter pub get`
+
 
 ## Usage
 
-Create a `Flutterwave` instance by calling the constructor `Flutterwave` The constructor accepts a mandatory instance of the following:  
-the calling `Context` , `publicKey`, `Customer`, `amount`, `currency`, `email`, `fullName`, `txRef`, `isDebug`, `paymentOptions`, and `Customization` . It returns an instance of `Flutterwave` which we then call the `async` method `.charge()` on.
+### Initializing a Flutterwave instance
 
-    _handlePaymentInitialization() async { 
-    final style = FlutterwaveStyle(
-     appBarText: "My Standard Blue", 
-     buttonColor: Color(0xffd0ebff), 
-     appBarIcon: Icon(Icons.message, color: Color(0xffd0ebff)),
-     buttonTextStyle: TextStyle( 
-	     color: Colors.black, 
-	     fontWeight: FontWeight.bold, 
-	     fontSize: 18), 
-    appBarColor: Color(0xffd0ebff), 
-    dialogCancelTextStyle: TextStyle(
-	    color: Colors.redAccent, 
-	    fontSize: 18
-	    ),
-    dialogContinueTextStyle: TextStyle(
-		    color: Colors.blue, 
-		    fontSize: 18
-		    ) 
-		  ); 
+To create an instance, you should call the Flutterwave constructor. This constructor accepts a mandatory instance of the following:
 
-    final Customer customer = Customer(
-		    name: "FLW Developer", 
-		    phoneNumber: "1234566677777", 
-		    email: "customer@customer.com"
-		    );  
-		    
-    final Flutterwave flutterwave = Flutterwave(
-		    context: context, 
-		    style: style, 
-		    publicKey: "Public Key, 
-		    currency: "RWF", 
-		    redirectUrl: "my_redirect_url" 
-		    txRef: "unique_transaction_reference", 
-		    amount: "3000", 
-		    customer: customer, 
-		    paymentOptions: "ussd, card, barter, payattitude", 
-		    customization: Customization(title: "Test Payment"),
-		    isDebug: true
-		    ); 
-		} 
+- The calling `Context`
+- `publicKey`
+- `Customer`
+- `amount`
+- `email`
+- `fullName`
+- `txRef`
+- `isTestMode`
+- `paymentOptions`
+- `redirectUrl`
+- `Customization`
 
-### 2. Handle the response
+It returns an instance of Flutterwave which we then call the async method `.charge()` on.
 
-Calling the `.charge()` method returns a `Future`  
-of `ChargeResponse` which we await for the actual response as seen above.
+_
+
+    handlePaymentInitialization() async { 
+    	 final Customer customer = Customer(
+    	 name: "Flutterwave Developer",
+    	 phoneNumber: "1234566677777",   
+         email: "customer@customer.com"  
+     );            
+        final Flutterwave flutterwave = Flutterwave(
+	        context: context, publicKey: "Public Key-here,
+    		currency: "currency-here",   
+            redirectUrl: "add-your-redirect-url-here"   
+            txRef: "add-your-unique-reference-here",   
+            amount: "3000",   
+            customer: customer,   
+            paymentOptions: "ussd, card, barter, payattitude",   
+            customization: Customization(title: "My Payment"),
+            isTestMode: true );
+     } 
+
+### Handling the response
+
+Calling the `.charge()` method returns a `Future` of `ChargeResponse` which we await for the actual response as seen above.
 
 
 
-     final ChargeResponse response = await flutterwave.charge(); 
-     if (response != null) { 
-	     print(response.toJson()); 
-		 if(response.success) { 
-		 Call the verify transaction endpoint with the transactionID returned in `response.transactionId` to verify transaction before offering value to customer 
-		 } else { 
-		  // Transaction not successful 
-		} 
-	 } else {
-	  // User cancelled 
-	 }
+    final ChargeResponse response = await flutterwave.charge(); 
 
-#### Please note that:
-- `ChargeResponse` can be null, depending on if the user cancels  
-  the transaction by pressing back.
-- You need to check the status of the transaction from the instance of `ChargeResponse` returned from calling `.charge()`, the `status`, `success` and `txRef` are successful and correct before providing value to the customer
+Call the verify transaction [endpoint](https://developer.flutterwave.com/docs/verifications/transaction) with the `transactionID` returned in `response.transactionId` or the `txRef` you provided to verify transaction before offering value to customer
 
->  **PLEASE NOTE**
+#### Note
 
-> We advise you to do a further verification of transaction's details on your server to be sure everything checks out before providing service.  
-<a id="deployment"></a>
+- `ChargeResponse` can be null, depending on if the user cancels the transaction by pressing back.
+- You need to confirm the transaction is successful. Ensure that the txRef, amount, and status are correct and successful. Be sure to [verify the transaction details](https://developer.flutterwave.com/docs/verifications/transaction) before providing value.
+- Some payment methods are not instant, such a `Pay with Bank Transfers, Pay with Bank`, and so you would need to rely on [webhooks](https://developer.flutterwave.com/docs/integration-guides/webhooks) or call the transaction verification service using the [`transactionId`](https://developer.flutterwave.com/reference/endpoints/transactions#verify-a-transaction), or transaction reference you created(`txRef`)
+- For such long payments like the above, closing the payment page returns a `cancelled` status, so your final source of truth has to be calling the transaction verification service.
 
+## Support
 
-##Testing
-`pub run test`
+For additional assistance using this library, contact the developer experience (DX) team via [email](mailto:developers@flutterwavego.com) or on [slack](https://bit.ly/34Vkzcg).
 
-## Debugging Errors
-We understand that you may run into some errors while integrating our library. You can read more about our error messages [here](https://developer.flutterwave.com/docs/integration-guides/errors).
-
-For `authorization` and `validation` error responses, double-check your API keys and request. If you get a `server` error, kindly engage the team for support.
-
-<a id="support"></a>
-## Support For additional assistance using this library, contact the developer experience (DX) team via [email](mailto:developers@flutterwavego.com) or on [slack](https://bit.ly/34Vkzcg).
-
-You can also follow us [@FlutterwaveEng](https://twitter.com/FlutterwaveEng) and let us know what you think 😊
+You can also follow us [@FlutterwaveEng](https://twitter.com/FlutterwaveEng) and let us know what you think 😊.
 
 ## Contribution guidelines
+
 Read more about our community contribution guidelines [here](https://www.notion.so/flutterwavego/Community-contribution-guide-ca1d8a876ba04d45ab4b663c758ae42a).
 
 ## License
-By contributing to the Flutter library, you agree that your contributions will be licensed under its [MIT license](https://opensource.org/licenses/MIT).
+
+By contributing to the Flutter library, you agree that your contributions will be licensed under its [MIT license](/LICENSE).
+
+Copyright (c) Flutterwave Inc.
 
 ## Built Using
+
 - [flutter](https://flutter.dev/)
 - [http](https://pub.dev/packages/http)
 - [flutter_inappwebview](https://pub.dev/packages/flutter_inappwebview)

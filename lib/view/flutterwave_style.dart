@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+@deprecated
+/// No longer needed since the intermediate screen was removed.
+/// Will be removed in further releases.
 class FlutterwaveStyle {
   final String? appBarText;
   final Color? buttonColor;

@@ -25,5 +25,8 @@ class ChargeResponse {
     data['tx_ref'] = this.txRef;
     return data;
   }
+
+  @override
+  String toString() => toJson().toString();
 }
 

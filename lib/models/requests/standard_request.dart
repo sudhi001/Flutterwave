@@ -38,10 +38,9 @@ class StandardRequest {
 
   String toString() => jsonEncode(this._toJson());
 
-
   /// Converts this instance to json
   Map<String, dynamic> _toJson() {
-    return {
+    final request = {
       "tx_ref": this.txRef,
       "publicKey": this.publicKey,
       "amount": this.amount,
@@ -54,6 +53,7 @@ class StandardRequest {
       "meta": this.meta,
       "customizations": customization.toJson()
     };
+    return Utils.removeKeysWithEmptyValues(request);
   }
 
   /// Executes network call to initiate transactions
@@ -67,10 +67,10 @@ class StandardRequest {
             HttpHeaders.contentTypeHeader: 'application/json'
           },
           body: json.encode(this._toJson()));
+
       final responseBody = json.decode(response.body);
       if (responseBody["status"] == "error") {
-        throw TransactionError(responseBody["message"] ??
-            "An unexpected error occurred. Please try again.");
+        throw TransactionError(TransactionError.formatError(responseBody));
       }
       return StandardResponse.fromJson(responseBody);
     } catch (error) {
