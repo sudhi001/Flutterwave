@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -55,26 +56,58 @@ class _StandardWebViewAppState extends State<StandardWebView> {
               initialUrl: widget.url,
               javascriptMode:  JavascriptMode.unrestricted,
               gestureRecognizers: gestureRecognizers,
-              navigationDelegate: (request) {
-                final url = Uri.parse(request.url);
-                if (_hasCompletedProcessing(url)) {
-                  _finish(url);
-                  return NavigationDecision.prevent;
-                } else {
-                  _hasCompletedProcessing(url);
-                  return NavigationDecision.navigate;
-                }
-              }
+              onPageStarted: (webUrl) {
+                final url = Uri.parse(webUrl);
+                _processUrl(url);
+              },
             ),
           )
       );
   }
 
-  bool _hasCompletedProcessing(final Uri uri) {
+  _processUrl(Uri uri) {
+    if (_checkHasAppendedWithResponse(uri)) {
+      _finishWithAppendedResponse(uri);
+    } else {
+      _checkHasCompletedProcessing(uri);
+    }
+  }
+
+  _checkHasCompletedProcessing(final Uri uri) {
     final status = uri.queryParameters["status"];
     final txRef = uri.queryParameters["tx_ref"];
     final id = uri.queryParameters["transaction_id"];
-    return status != null && txRef != null;
+    if (status != null && txRef != null) {
+      _finish(uri);
+    }
+  }
+
+  bool _checkHasAppendedWithResponse(final Uri uri) {
+    final response = uri.queryParameters["response"];
+    if (response != null) {
+      final json = jsonDecode(response);
+      final status = json["status"];
+      final txRef = json["txRef"];
+      return status != null && txRef != null;
+    }
+    return false;
+  }
+
+  _finishWithAppendedResponse(Uri uri) {
+    final response = uri.queryParameters["response"];
+    final decoded = Uri.decodeFull(response!);
+    final json = jsonDecode(decoded);
+    final status = json["status"];
+    final txRef = json["txRef"];
+    final id = json["id"];
+
+    final ChargeResponse chargeResponse = ChargeResponse(
+        status: status,
+        transactionId: "$id",
+        txRef: txRef,
+        success: status?.contains("success") == true
+    );
+    Navigator.pop(context, chargeResponse);
   }
 
   _finish(final Uri uri) {

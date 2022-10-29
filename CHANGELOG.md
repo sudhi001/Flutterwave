@@ -1,3 +1,7 @@
+## [1.0.6] - October, 2022
+* Fixed bug where transaction gets stuck after redirecting on webview
+* Fixed iOS build bug by removing inAppBrowser library
+
 ## [1.0.5] - October, 2022
 * Fixed null when transaction is cancelled.
 * Removed modal pop up before launching web view.
