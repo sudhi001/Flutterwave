@@ -38,7 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String selectedCurrency = "";
 
   bool isTestMode = true;
-  final pbk = "FLWPUBK_TEST";
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: double.infinity,
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
                 child: Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Use Debug"),
                     Switch(
@@ -187,7 +185,6 @@ class _MyHomePageState extends State<MyHomePage> {
         txRef: Uuid().v1(),
         amount: this.amountController.text.toString().trim(),
         customer: customer,
-        // subAccounts: subAccounts,
         paymentOptions: "card, payattitude, barter, bank transfer, ussd",
         customization: Customization(title: "Test Payment"),
         isTestMode: this.isTestMode);
@@ -201,8 +198,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String getPublicKey() {
-    if (isTestMode) return "FLWPUBK_TEST--X";
-    return "FLWPUBK--X";
+    if (isTestMode) return "FLWPUBK_TEST-6f008dca68dc8988715b929f2861da41-X";
+    return "FLWPUBK-45587fdb1c84335354ab0fa388b803d5-X";
   }
 
   void _openBottomSheet() {
