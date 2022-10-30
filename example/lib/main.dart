@@ -198,8 +198,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   String getPublicKey() {
-    if (isTestMode) return "FLWPUBK_TEST-6f008dca68dc8988715b929f2861da41-X";
-    return "FLWPUBK-45587fdb1c84335354ab0fa388b803d5-X";
+    if (isTestMode) return "FLWPUBK_TEST--X";
+    return "FLWPUBK--X";
   }
 
   void _openBottomSheet() {
